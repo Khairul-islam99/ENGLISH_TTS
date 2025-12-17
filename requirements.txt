@@ -1,0 +1,26 @@
+# -----------------------------
+# Core ML Framework (GPU-enabled PyTorch)
+# -----------------------------
+--extra-index-url https://download.pytorch.org/whl/cu124
+torch==2.6.0
+torchvision==0.21.0
+torchaudio==2.6.0
+
+# -----------------------------
+# Chatterbox (AI TTS/Chat)
+# -----------------------------
+git+https://github.com/resemble-ai/chatterbox.git
+
+# -----------------------------
+# API Framework
+# -----------------------------
+fastapi
+uvicorn==0.35.0
+gunicorn==23.0.0
+
+# -----------------------------
+# Utilities
+# -----------------------------
+python-multipart>=0.0.18
+python-dotenv==1.1.1
+nltk>=3.8  # চাঙ্কিং-এর জন্য sent_tokenize দরকার

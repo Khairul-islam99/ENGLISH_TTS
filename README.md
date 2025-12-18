@@ -42,5 +42,31 @@ Designed strictly for **internal company / office use**.
 
 ### 1️⃣ Clone Repository
 ```bash
-git clone https://github.com/your-org/chatterbox-long-tts-api.git
+git clone https://github.com/Khairul-islam99/
 cd chatterbox-long-tts-api
+```
+2️⃣ Create .env File
+```bash
+DEFAULT_VOICE=C:\path\to\your\high_quality_voice_sample.mp3
+```
+3️⃣ Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+4️⃣ Run Server
+```bash
+python main.py
+```
+Or using Uvicorn:
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+### 🌐 Access
+
+📄 API Docs (Swagger)
+http://localhost:8000/docs
+
+❤️ Health Check
+http://localhost:8000/health
+
+

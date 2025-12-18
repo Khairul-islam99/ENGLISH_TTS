@@ -42,8 +42,8 @@ Designed strictly for **internal company / office use**.
 
 ### 1️⃣ Clone Repository
 ```bash
-git clone https://github.com/Khairul-islam99/
-cd chatterbox-long-tts-api
+git clone https://github.com/Khairul-islam99/ENGLISH_TTS.git
+cd ENGLISH_TTS
 ```
 2️⃣ Create .env File
 ```bash

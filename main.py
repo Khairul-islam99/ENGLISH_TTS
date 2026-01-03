@@ -3,64 +3,62 @@ import uvicorn
 import time
 from datetime import datetime
 from fastapi import FastAPI
-from tts_long import router as tts_long_router  # Router for long-text TTS endpoint
-from chatterbox.tts import ChatterboxTTS  # Chatterbox TTS model class
-from config import DEVICE, DEFAULT_VOICE  # Device (GPU/CPU) and default voice path
 
-# Logging configuration - standard format for production/console output
+from tts_long import router as tts_long_router
+from chatterbox.tts import ChatterboxTTS
+from config import DEVICE
+
+# Structured logging configuration
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 
-# FastAPI application instance
+# FastAPI application
 app = FastAPI(
-    title="Chatterbox Long TTS API",
-    version="1.0.0",
-    description="Optimized TTS service for long texts (with chunking and natural pauses)"
+    title="Chatterbox Long-Form TTS API",
+    description="High-quality text-to-speech service optimized for long content with natural flow.",
+    version="1.0.0"
 )
 
-# Global model variable - loaded once at server startup
+# Global model reference
 model = None
 
 @app.on_event("startup")
-async def load_model():
-    """Load the Chatterbox TTS model when the server starts"""
+async def startup_event():
+    """Initialize the TTS model on server startup"""
     global model
     try:
         model = ChatterboxTTS.from_pretrained(device=DEVICE)
-        logger.info(f"✅ Chatterbox TTS model successfully loaded on {DEVICE}")
+        app.state.model = model  # Make available to routes
+        logger.info(f"TTS model loaded successfully on {DEVICE}")
     except Exception as e:
-        logger.error(f"❌ Failed to load model: {e}")
+        logger.critical(f"Failed to load TTS model: {e}")
         raise
 
-# Include the TTS router
+# Include API routes
 app.include_router(tts_long_router)
 
-# Store model in app state for access in other modules (optional fallback)
-app.state.model = None
-
-# Health check endpoint - used for monitoring and production readiness
+# Server uptime tracking
 start_time = time.time()
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint returning server status and basic info"""
-    global model
+    """Health endpoint for monitoring and load balancers"""
     uptime = time.time() - start_time
     return {
-        "status": "healthy" if model is not None else "loading",
+        "status": "healthy" if model is not None else "initializing",
         "model_loaded": model is not None,
+        "device": DEVICE,
         "uptime_seconds": round(uptime, 2),
-        "timestamp": datetime.utcnow().isoformat(),
-        "default_voice": DEFAULT_VOICE
+        "timestamp": datetime.utcnow().isoformat() + "Z"
     }
 
-# Run the server when executed directly
+# Development server entry point
 if __name__ == "__main__":
-    logger.info("Starting Long TTS API server...")
+    logger.info("Starting Chatterbox Long TTS API server...")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
